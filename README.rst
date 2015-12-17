@@ -1,5 +1,5 @@
 =========================================================================================
-NSD and Unbound and DNS server configuration    
+NSD and Unbound (authoritative and caching resolving) DNS server configuration    
 =========================================================================================
 
 
@@ -29,7 +29,7 @@ Generates zones files for domains defined in a pillar file,
 and reloads NSD server with a new configuration  
   
 
-  
+
 ``dns.check``
 ----------------------------------------------------------------------------------------
 

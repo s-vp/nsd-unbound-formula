@@ -1,5 +1,5 @@
 =========================================================================================
-NSD and Unbound (authoritative and caching resolving) DNS server configuration    
+NSD (authoritative) + Unbound (recursive, caching) DNS server config    
 =========================================================================================
 
 

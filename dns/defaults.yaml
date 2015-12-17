@@ -1,0 +1,10 @@
+{% load_yaml as zone_defaults %}
+TTL: 86400
+serial number: 2014010203
+refresh: 28800
+retry: 7200
+expire: 864000
+min_ttl: 86400
+
+
+{% endload %}

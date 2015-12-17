@@ -1,0 +1,139 @@
+dns:
+  clean_config: False
+  resolv_conf: True
+  cluster_config: True
+  install_packages: ['nsd' , 'unbound']
+#
+# defualt cluster config contains of 2 nodes (unbound+dns): 
+#
+##########################################################
+#   My ZONES and Domains configurtion PART GOES HERE 
+##########################################################
+  mydomains: 
+    example.com:
+      primary_ip: 10.0.0.10   
+      secondary_ip: 10.0.0.11
+      local_zone: "10.in-addr.arpa"
+      records: 
+        MX: mail
+        NS1: ns1
+        NS2: ns2
+        A:
+          dhcp:     10.0.0.1
+          host11:    10.0.0.11
+          host13:    10.0.0.13
+          mail:     10.0.0.9
+          ns1:      10.0.0.20
+          ns2:      10.0.0.21
+          wildcard: 10.0.0.254
+##########################################################
+#   FORWARDING ZONES PART GOES HERE 
+##########################################################
+#  fwzones:
+#    google.com:
+#      forward-addr1: 8.8.8.8 
+#      forward-addr2: 9.9.9.9
+##########################################################
+#   UNBOUND (caching resolver) PART GOES HERE 
+##########################################################
+  unbound:
+    name: "unbound"
+    prefix: "/var/unbound"
+    conf_file: '/var/unbound/etc/unbound.conf'
+    ad_servers: '/var/unbound/etc/unbound_ad_servers'
+    include: "/var/unbound/etc/zones.conf"
+    config:
+      server:
+        logfile: /var/log/unboud.log
+        verbosity: 1
+        interface: 10.0.0.10
+        port: 53
+        do-ip4: 'yes'
+        do-ip6: 'yes'
+        do-udp: 'yes'
+        do-tcp: 'yes'
+        access-control: 10.0.0.0/24 allow
+        root-hints: "/etc/root.hints"
+        hide-identity: 'yes'
+        hide-version: 'yes'
+        harden-glue: 'yes'
+        harden-dnssec-stripped: 'yes'
+        use-caps-for-id: 'yes'
+        cache-min-ttl: 3600
+        cache-max-ttl: 86400
+        prefetch: 'yes'
+        num-threads: 2
+        msg-cache-slabs: 8
+        rrset-cache-slabs: 8
+        infra-cache-slabs: 8
+        key-cache-slabs: 8
+        rrset-cache-size: 2m
+        msg-cache-size: 1m
+        private-address: 10.0.0.0/24
+        unwanted-reply-threshold: 10000
+        do-not-query-localhost: 'no'
+        auto-trust-anchor-file: "/etc/keys/root.key"
+        val-clean-additional: 'yes'
+        include: "/var/unbound/etc/unbound_ad_servers"
+      remote-control:
+        control-enable: 'yes'
+        control-use-cert: 'no'
+        control-interface: /var/run/unbound.sock
+##########################################################
+#   NSD (Authoritive DNS) PART GOES HERE 
+##########################################################
+  nsd:
+    name: "nsd"
+    prefix: "/var/nsd"
+    conf_file: '/var/nsd/etc/nsd.conf'
+    include: /var/nsd/etc/zones.conf
+    config:
+      server:
+        server-count: 3
+        tcp-count: 100                                                                                                                                                
+        hide-version: 'yes' 
+        database: "/var/nsd/db/nsd.db"                                                                                                                 
+        username: _nsd                                                                                                                                 
+        logfile: "/var/log/nsd.log"                                                                                                                    
+        pidfile: "/var/nsd/run/nsd.pid"                                                                                                                
+        xfrdfile: "/var/nsd/run/xfrd.state"                                                                                                            
+        xfrdir: /var/nsd/run/xfr
+        ip-address: 127.0.0.1                                                                                                                           
+        port: 5353                                                                                                                                     
+        do-ip4: 'yes'
+        identity: ""                                                                                                                                   
+        zonesdir: "/var/nsd/zones"                                                                                                                           
+        zonelistfile: "/var/nsd/db/zone.list"
+      key:                                                                                                                                                   
+        name: "tsig1"                                                                                                                        
+        algorithm: hmac-sha256                                                                                                                         
+        secret: "######### Replace with your secret key ################"                                                                                                                                                                                                                                                                        
+      remote-control:
+        control-enable: 'yes'
+##########################################################
+#   NSD 3 parameters: left here for backward compatability 
+##########################################################
+  nsd3:
+    name: "nsd"
+    user: _nsd
+    prefix: "/var/nsd"
+    conf_file: '/var/nsd/etc/nsd.conf'
+    include: /var/nsd/etc/zones.conf
+    config:
+      server:                                                                                                                                                
+        hide-version: 'yes' 
+        database: "/var/nsd/db/nsd.db"                                                                                                                 
+        username: _nsd                                                                                                                                 
+        logfile: "/var/log/nsd.log"                                                                                                                    
+        pidfile: "/var/nsd/run/nsd.pid"                                                                                                                
+        difffile: "/var/nsd/run/ixfr.db"                                                                                                               
+        xfrdfile: "/var/nsd/run/xfrd.state"                                                                                                            
+        ip-address: 127.0.0.1                                                                                                                           
+        port: 5353                                                                                                                                     
+        ip4-only: 'yes'
+        identity: ""                                                                                                                                   
+        zonesdir: "/var/nsd/zones"                                                                                                                           
+      key:                                                                                                                                                   
+        name: "tsig1"                                                                                                                        
+        algorithm: hmac-sha256                                                                                                                         
+        secret: "######### Replace with your secret key ################"                                                                                                                                                                                                                                                                        

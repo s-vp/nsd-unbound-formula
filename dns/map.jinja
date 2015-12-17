@@ -1,0 +1,16 @@
+{% set dns = salt['grains.filter_by']({
+    'Ubuntu': {
+        'install_packages': ['nsd', 'unbound'], 
+    	'nsd': { 'user' : 'nsd' }, 
+    	'unbound': { 'user' : 'unbound' },
+    },
+    'Debian': {
+        'install_packages': ['nsd', 'unbound'], 
+    	'nsd': { 'user' : 'nsd' }, 
+    	'unbound': { 'user' : 'unbound' },
+    },
+    'OpenBSD': {
+    	'nsd': { 'user': '_nsd' }, 
+    	'unbound': { 'user': '_unbound' },
+    }
+}, merge=salt['pillar.get']('dns')) %}

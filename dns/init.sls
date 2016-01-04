@@ -131,11 +131,14 @@ ad_servers_replace:
 
 
 {{ this.prefix }}{{ anchor_file }}:
-  file.touch: 
+  file.managed: 
+    - user: {{ this.user }}
+    - group: {{ this.user }}
     - makedirs: True 
+    - mode: 640
+    - replace: False
 
-unbound-anchor -a {{ this.prefix }}{{ anchor_file }}:
-  cmd.run
+unbound-anchor -a {{ this.prefix }}{{ anchor_file }}: cmd.run
 
 {% endif %}
 
@@ -162,3 +165,7 @@ start_service {{ this.name }}:
       - file: {{ this.conf_file }}
       - file: {{ this.include }}
 {% endfor %}
+
+
+include: 
+  - dns/zones

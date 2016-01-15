@@ -19,7 +19,7 @@ Available states
 ``dns``
 ----------------------------------------------------------------------------------------
 
-Installs packages, and a basic config.
+Installs packages, and does basic configuration 
 
 
 ``dns.zones``
